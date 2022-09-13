@@ -39,23 +39,6 @@ else:
     elif args.cluster_mode == "spark-submit":
         init_orca_context(cluster_mode="spark-submit")
 
-# _VALID_TYPES = {tuple, list, str, int, float, bool}
-
-# from fvcore.common.config import CfgNode
-
-# def convert_to_dict(cfg_node, key_list=[]):
-#     """ Convert a config node to dictionary """
-#     if not isinstance(cfg_node, CfgNode):
-#         if type(cfg_node) not in _VALID_TYPES:
-#             print("Key {} with value {} is not a valid type; valid types: {}".format(
-#                 ".".join(key_list), type(cfg_node), _VALID_TYPES), )
-#         return cfg_node
-#     else:
-#         cfg_dict = dict(cfg_node)
-#         for k, v in cfg_dict.items():
-#             cfg_dict[k] = convert_to_dict(v, key_list + [k])
-#         return cfg_dict
-
 class WrappedDataLoader(DataLoader):
     def __init__(self, loader, func) -> None:
         data_loader_args = {
@@ -81,8 +64,9 @@ def reduceWrapper(func):
 def train_loader_creator(config, batch_size):
     train_loader = loader.construct_loader(config, "train")
     loader.shuffle_dataset(train_loader, 0)
-    return WrappedDataLoader(train_loader, reduceWrapper)
-    # return train_loader
+    train_loader.collate_fn = reduceWrapper(train_loader.collate_fn)
+    # return WrappedDataLoader(train_loader, reduceWrapper)
+    return train_loader
 
 def model_creator(config):
     return build_model(config)
@@ -116,22 +100,6 @@ elif args.backend in ["ray", "spark"]:
                                           backend=args.backend,
                                           config=cfg,
                                           use_tqdm=True)
-
     orca_estimator.fit(data=train_loader_creator, epochs=cfg.SOLVER.MAX_EPOCH)
 
-# model = model_creator(cfg)
-# loss_func = loss_creator(cfg)
-# optimizer_model = optim_creator(model, cfg)
-# for i,(input, label,index, time, meta) in enumerate(train_loader_creator(cfg,0)):
-#     preds = model(input)
-#     print("cur iteration ", i)
-#     loss=loss_func(preds, label)
-#     if isinstance(loss, (list, tuple)):
-#         print("loss iterable")
-#         loss, loss_extra = loss
-#     loss.backward()
-#     optimizer_model.step()
-
-
 stop_orca_context()
-
