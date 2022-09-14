@@ -12,7 +12,7 @@ DATA:
   TRAIN_CROP_SIZE: 224
   TEST_CROP_SIZE: 256
   INPUT_CHANNEL_NUM: [3, 3]
-  PATH_TO_DATA_DIR: /home/chriskafka/project/slowfast/dataset/tiny-kinetics-400/data
+  PATH_TO_DATA_DIR: /home/chriskafka/project/slowfast/orcaexample/dataset/tiny-kinetics-400/data
   DECODING_BACKEND: pyav
 SLOWFAST:
   ALPHA: 4
@@ -54,7 +54,7 @@ MODEL:
 TEST:
   ENABLE: False
   DATASET: kinetics
-  BATCH_SIZE: 64
+  BATCH_SIZE: 4
 DATA_LOADER:
   NUM_WORKERS: 8
   PIN_MEMORY: True
