@@ -21,8 +21,8 @@ parser.add_argument('--cfg_files', type=str, default="../configs/Kinetics/SLOWFA
                     help='The path to config file')
 parser.add_argument('--backend', type=str, default="bigdl",
                     help='The backend of PyTorch Estimator; bigdl, ray, and spark are supported')
-parser.add_argument("--executor_memory", type=str, default="5g", help="executor memory")
-parser.add_argument("--driver_memory", type=str, default="5g", help="driver memory")
+parser.add_argument("--executor_memory", type=str, default="8g", help="executor memory")
+parser.add_argument("--driver_memory", type=str, default="8g", help="driver memory")
 parser.add_argument(
     "--opts",
     help="See slowfast/config/defaults.py for all options",
@@ -95,22 +95,22 @@ if args.backend == "bigdl":
                        )
     val_stats = orca_estimator.evaluate(data=validation_data_creator(cfg,0))
     print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
-elif args.backend in ["ray", "spark"]:
-    orca_estimator = Estimator.from_torch(model=model_creator,
-                                          optimizer=optim_creator,
-                                          loss=loss_creator,
-                                          metrics=[Accuracy()],
-                                          backend=args.backend,
-                                          config=cfg,
-                                          model_dir=os.getcwd(),
-                                          use_tqdm=True)
-    orca_estimator.fit(data=train_loader_creator,
-                       validation_data=validation_data_creator,
-                       batch_size=cfg.TRAIN.BATCH_SIZE,
-                       epochs=cfg.SOLVER.MAX_EPOCH)
-    val_stats = orca_estimator.evaluate(data=validation_data_creator, batch_size=cfg.TEST.BATCH_SIZE)
-    print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
-    orca_estimator.shutdown()
+# elif args.backend in ["ray", "spark"]:
+#     orca_estimator = Estimator.from_torch(model=model_creator,
+#                                           optimizer=optim_creator,
+#                                           loss=loss_creator,
+#                                           metrics=[Accuracy()],
+#                                           backend=args.backend,
+#                                           config=cfg,
+#                                           model_dir=os.getcwd(),
+#                                           use_tqdm=True)
+#     orca_estimator.fit(data=train_loader_creator,
+#                        validation_data=validation_data_creator,
+#                        batch_size=cfg.TRAIN.BATCH_SIZE,
+#                        epochs=cfg.SOLVER.MAX_EPOCH)
+#     val_stats = orca_estimator.evaluate(data=validation_data_creator, batch_size=cfg.TEST.BATCH_SIZE)
+#     print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
+#     orca_estimator.shutdown()
 else:
     invalidInputError(False, "Only bigdl, ray, and spark are supported "
                         "as the backend, but got {}".format(args.backend))
