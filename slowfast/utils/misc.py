@@ -427,7 +427,6 @@ def launch_job(cfg, init_method, func, daemon=False):
             daemon=daemon,
         )
     else:
-        print("GPU Number is 0")
         func(cfg=cfg)
 
 

@@ -17,8 +17,6 @@ def main():
     Main function to spawn the train and test process.
     """
     args = parse_args()
-    print(args)
-    # return
     print("config files: {}".format(args.cfg_files))
     for path_to_config in args.cfg_files:
         cfg = load_config(args, path_to_config)
