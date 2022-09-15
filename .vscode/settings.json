@@ -1,4 +1,0 @@
-{
-    "editor.fontWeight": "normal",
-    "python.envFile": "${workspaceFolder}/.vscode/.env"
-}

@@ -78,9 +78,8 @@ def loss_creator(config):
 
 cfg = load_config(args, args.cfg_files)
 
-loss_fun = losses.get_loss_func(cfg.MODEL.LOSS_FUNC)(reduction="mean")
-
 if args.backend == "bigdl":
+    loss_fun = loss_creator(cfg)
     net = model_creator(cfg)
     optimizer = optim_creator(model=net, config=cfg)
     orca_estimator = Estimator.from_torch(model=net,
@@ -89,7 +88,7 @@ if args.backend == "bigdl":
                                           metrics=[Accuracy()],
                                           backend=args.backend,
                                           config=cfg)
-    orca_estimator.fit(data=train_loader_creator(cfg, 0),
+    orca_estimator.fit(data=train_loader_creator(cfg, cfg.TRAIN.BATCH_SIZE),
                        validation_data=validation_data_creator(cfg,0),
                        epochs=cfg.SOLVER.MAX_EPOCH,
                        checkpoint_trigger=EveryEpoch()
