@@ -136,7 +136,6 @@ def train_epoch(
                 preds, labels = model(inputs)
             else:
                 preds = model(inputs)
-            print("cur iteration ", cur_iter)
             if cfg.TASK == "ssl" and cfg.MODEL.MODEL_NAME == "ContrastiveModel":
                 labels = torch.zeros(
                     preds.size(0), dtype=labels.dtype, device=labels.device

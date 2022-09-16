@@ -412,7 +412,6 @@ def launch_job(cfg, init_method, func, daemon=False):
             daemonic processes will be created
     """
     if cfg.NUM_GPUS > 1:
-        print("GPU Number is {}".format(cfg.NUM_GPUS))
         torch.multiprocessing.spawn(
             mpu.run,
             nprocs=cfg.NUM_GPUS,
@@ -428,7 +427,6 @@ def launch_job(cfg, init_method, func, daemon=False):
             daemon=daemon,
         )
     else:
-        print("GPU Number is 0")
         func(cfg=cfg)
 
 
