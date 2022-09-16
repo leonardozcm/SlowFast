@@ -17,7 +17,7 @@ from bigdl.orca import init_orca_context, stop_orca_context
 parser = argparse.ArgumentParser(description='PyTorch Kinectics Example')
 parser.add_argument('--cluster_mode', type=str, default="local",
                     help='The cluster mode, such as local, yarn-client, yarn-cluster, spark-submit or k8s.')
-parser.add_argument('--cfg_files', type=str, default="../configs/Kinetics/SLOWFAST_8x8_R50.yaml",
+parser.add_argument('--cfg_files', type=str, default="./SLOWFAST_8x8_R50.yaml",
                     help='The path to config file')
 parser.add_argument('--backend', type=str, default="bigdl",
                     help='The backend of PyTorch Estimator; bigdl, ray, and spark are supported')
@@ -89,11 +89,11 @@ if args.backend == "bigdl":
                                           backend=args.backend,
                                           config=cfg)
     orca_estimator.fit(data=train_loader_creator(cfg, cfg.TRAIN.BATCH_SIZE),
-                       validation_data=validation_data_creator(cfg,0),
+                       validation_data=validation_data_creator(cfg,cfg.TEST.BATCH_SIZE),
                        epochs=cfg.SOLVER.MAX_EPOCH,
                        checkpoint_trigger=EveryEpoch()
                        )
-    val_stats = orca_estimator.evaluate(data=validation_data_creator(cfg,0))
+    val_stats = orca_estimator.evaluate(data=validation_data_creator(cfg,cfg.TEST.BATCH_SIZE))
     print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
 # elif args.backend in ["ray", "spark"]:
 #     orca_estimator = Estimator.from_torch(model=model_creator,
