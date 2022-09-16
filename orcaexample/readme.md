@@ -41,10 +41,26 @@ mkdir dataset
 cd dataset
 git clone https://github.com/Tramac/tiny-kinetics-400.git
 ```
-And download dataset archive [link](https://github.com/leonardozcm/SlowFast/releases/download/tinykinectic400/tiny-kinetics-400.zip), extract it and place them under [here](https://github.com/Tramac/tiny-kinetics-400/tree/main/data)
-more information refer to [document](https://github.com/Tramac/tiny-kinetics-400)
+And download dataset archive [link](https://github.com/leonardozcm/SlowFast/releases/download/tinykinectic400/tiny-kinetics-400.zip0), extract it and place them under [here](https://github.com/Tramac/tiny-kinetics-400/tree/main/data)
+more information refer to [document](https://github.com/Tramac/tiny-kinetics-400). And run gen_csv.py to generate train.csv and val.csv under `orcaexample/dataset/tiny-kinetics-400/data`
+
+```
+cd SlowFast/orcaexample
+python gen_csv.py
+```
+train.csv be like:
+```
+dataset/tiny-kinetics-400/data/abseiling/-3B32lodo2M_000059_000069.mp4 0
+dataset/tiny-kinetics-400/data/abseiling/_4YTwq0-73Y_000044_000054.mp4 0
+dataset/tiny-kinetics-400/data/abseiling/_EDt9CNqqxk_000260_000270.mp4 0
+...
+```
 
 Note that for yarn mode, you need to pack datasets/ yourself.
+
+```
+zip -q -r tiny-kinetics-400.zip tiny-kinetics-400
+```
 
 ## Install slowfast
 Please **make sure** your slowfast works--After having the above dependencies, run:
