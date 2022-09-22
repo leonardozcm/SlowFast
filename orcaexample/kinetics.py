@@ -7,7 +7,6 @@ import slowfast.models.optimizer as optim
 from slowfast.datasets import loader
 from slowfast.utils.parser import load_config
 
-from bigdl.dllib.utils.log4Error import invalidInputError
 from bigdl.orca.learn.pytorch import Estimator
 from bigdl.orca.learn.metrics import Accuracy
 from bigdl.orca.learn.trigger import EveryEpoch
@@ -35,18 +34,16 @@ if args.cluster_mode == "local":
     init_orca_context(memory="12g", cores=8)
 elif args.cluster_mode.startswith("yarn"):
     hadoop_conf = os.environ.get("HADOOP_CONF_DIR")
-    invalidInputError(
-        hadoop_conf is not None,
-        "Directory path to hadoop conf not found for yarn-client mode. Please "
-        "set the environment variable HADOOP_CONF_DIR")
+    assert hadoop_conf is not None, \
+        "Directory path to hadoop conf not found for yarn-client mode. Please " \
+        "set the environment variable HADOOP_CONF_DIR"
     additional = None if not os.path.exists("dataset/tiny-kinetics-400.zip") else "dataset/tiny-kinetics-400.zip#dataset"
     init_orca_context(cluster_mode="yarn-cluster", memory=args.executor_memory, driver_memory=args.driver_memory)
 elif args.cluster_mode == "spark-submit":
     init_orca_context(cluster_mode="spark-submit")
 else:
-    invalidInputError(False,
-                      "cluster_mode should be one of 'local', 'yarn', 'standalone' and"
-                      " 'spark-submit', but got " + args.cluster_mode)
+    assert False, "cluster_mode should be one of 'local', 'yarn', 'standalone' and" \
+                      " 'spark-submit', but got " + args.cluster_mode
 
 def reduceWrapper(func):
     def reduceIterElement(batch):
@@ -96,23 +93,23 @@ if args.backend == "bigdl":
     val_stats = orca_estimator.evaluate(data=validation_data_creator(cfg,cfg.TEST.BATCH_SIZE))
     print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
 # elif args.backend in ["ray", "spark"]:
-#     orca_estimator = Estimator.from_torch(model=model_creator,
-#                                           optimizer=optim_creator,
-#                                           loss=loss_creator,
-#                                           metrics=[Accuracy()],
-#                                           backend=args.backend,
-#                                           config=cfg,
-#                                           model_dir=os.getcwd(),
-#                                           use_tqdm=True)
-#     orca_estimator.fit(data=train_loader_creator,
-#                        validation_data=validation_data_creator,
-#                        batch_size=cfg.TRAIN.BATCH_SIZE,
-#                        epochs=cfg.SOLVER.MAX_EPOCH)
-#     val_stats = orca_estimator.evaluate(data=validation_data_creator, batch_size=cfg.TEST.BATCH_SIZE)
-#     print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
-#     orca_estimator.shutdown()
+    # orca_estimator = Estimator.from_torch(model=model_creator,
+    #                                       optimizer=optim_creator,
+    #                                       loss=loss_creator,
+    #                                       metrics=[Accuracy()],
+    #                                       backend=args.backend,
+    #                                       config=cfg,
+    #                                       model_dir=os.getcwd(),
+    #                                       use_tqdm=True)
+    # orca_estimator.fit(data=train_loader_creator,
+    #                    validation_data=validation_data_creator,
+    #                    batch_size=cfg.TRAIN.BATCH_SIZE,
+    #                    epochs=cfg.SOLVER.MAX_EPOCH)
+    # val_stats = orca_estimator.evaluate(data=validation_data_creator, batch_size=cfg.TEST.BATCH_SIZE)
+    # print("===> Validation Complete: Top1Accuracy {}".format(val_stats["Accuracy"]))
+    # orca_estimator.shutdown()
 else:
-    invalidInputError(False, "Only bigdl, ray, and spark are supported "
-                        "as the backend, but got {}".format(args.backend))
+    assert False, "Only bigdl, ray, and spark are supported " \
+                        "as the backend, but got {}".format(args.backend)
 
 stop_orca_context()
